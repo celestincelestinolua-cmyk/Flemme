@@ -1,95 +1,93 @@
-const os = require("os");
+const OsangoMessie = require('os');
+const moment = require('moment-timezone');
+
+const styleMap = {
+    'A': '𝘈', 'B': '𝘉', 'C': '𝘊', 'D': '𝘋', 'E': '𝘌', 'F': '𝘍',
+    'G': '𝘎', 'H': '𝘏', 'I': '𝘐', 'J': '𝘑', 'K': '𝘒', 'L': '𝘓',
+    'M': '𝘔', 'N': '𝘕', 'O': '𝘖', 'P': '𝘗', 'Q': '𝘘', 'R': '𝘙',
+    'S': '𝘚', 'T': '𝘛', 'U': '𝘜', 'V': '𝘝', 'W': '𝘞', 'X': '𝘟',
+    'Y': '𝘠', 'Z': '𝘡',
+    'a': '𝘢', 'b': '𝘣', 'c': '𝘤', 'd': '𝘥', 'e': '𝘦', 'f': '𝘧',
+    'g': '𝘨', 'h': '𝘩', 'i': '𝘪', 'j': '𝘫', 'k': '𝘬', 'l': '𝘭',
+    'm': '𝘮', 'n': '𝘯', 'o': '𝘰', 'p': '𝘱', 'q': '𝘲', 'r': '𝘳',
+    's': '𝘴', 't': '𝘵', 'u': '𝘶', 'v': '𝘷', 'w': '𝘸', 'x': '𝘹',
+    'y': '𝘺', 'z': '𝘻'
+};
+
+function applyStyle(text) {
+    return text.split('').map(char => styleMap[char] || char).join('');
+}
 
 module.exports = {
-  config: {
-    name: "uptime",
-    aliases: ["up", "upt"],
-    version: "5.1",
-    author: "Alamin",
-    role: 0,
-    shortDescription: "Show bot uptime with moon phase animation",
-    longDescription: "Displays bot uptime stats in stylish moon-phase animation format with total users and threads.",
-    category: "system",
-    guide: "{p}uptime"
-  },
+    config: {
+        name: "uptime",
+        aliases: ["upt", "up"],
+        version: "1.0",
+        author: "𝚖𝚎𝚜𝚜𝚒𝚎 𝚘𝚜𝚊𝚗𝚐𝚘",
+        role: 0,
+        shortDescription: {
+            en: applyStyle("𝚂𝚝𝚊𝚝𝚒𝚜𝚝𝚒𝚚𝚞𝚎𝚜 𝚜𝚢𝚜𝚝𝚎𝚖𝚎")
+        },
+        longDescription: {
+            en: applyStyle("𝙰𝚏𝚏𝚒𝚌𝚑𝚎 𝚕𝚎𝚜 𝚙𝚎𝚛𝚏𝚘𝚛𝚖𝚊𝚗𝚌𝚎𝚜 𝚍𝚞 𝚜𝚢𝚜𝚝𝚎𝚖𝚎")
+        },
+        category: "𝚜𝚢𝚜𝚝𝚎𝚖",
+        guide: {
+            en: applyStyle("╭─⌾⋅ ミ✘.𝚄𝚂𝙰𝙶𝙴 ⋅⌾──╮\n│\n│   {p}uptime\n│\n╰─────⌾⋅  ⋅⌾─────╯")
+        }
+    },
+    onStart: async function ({ api, event }) {
+        try {
+            const Madara = process.uptime();
+            const satoru = OsangoMessie.uptime();
 
-  onStart: async function ({ api, event, usersData, threadsData }) {
-    const delay = ms => new Promise(res => setTimeout(res, ms));
+            const gojo = Math.floor(Madara / 86400);
+            const sung = Math.floor((Madara % 86400) / 3600);
+            const jinwoo = Math.floor((Madara % 3600) / 60);
+            const messie = Math.floor(Madara % 60);
 
-    const loadingFrames = [
-      "🌑 [░░░░░░░░░░░░░░] 0%",
-      "🌒 [▓▓▓▓░░░░░░░░░░] 25%",
-      "🌓 [▓▓▓▓▓▓▓▓░░░░░░] 50%",
-      "🌔 [▓▓▓▓▓▓▓▓▓▓▓▓░░] 75%",
-      "🌕 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%"
-    ];
+            const Osango = `╭───────💫 𝙱𝙾𝚃 ───────╮\n│\n│ ${gojo} 𝚓𝚘𝚞𝚛𝚜\n│ ${sung} 𝚑𝚎𝚞𝚛𝚎𝚜\n│ ${jinwoo} 𝚖𝚒𝚗𝚞𝚝𝚎𝚜\n│ ${messie} 𝚜𝚎𝚌𝚘𝚗𝚍𝚎𝚜\n│\n╰─────────────────────╯`;
 
-    try {
-      // Step 1: Loading animation
-      const loadingMsg = await api.sendMessage(
-        `🌕 𝐋𝐨𝐚𝐝𝐢𝐧𝐠 𝐁𝐨𝐭 𝐔𝐩𝐭𝐢𝐦𝐞...\n${loadingFrames[0]}`,
-        event.threadID
-      );
+            const sungJinWoo = Math.floor(satoru / 86400);
+            const Igris = Math.floor((satoru % 86400) / 3600);
+            const beru = Math.floor((satoru % 3600) / 60);
+            const bellion = Math.floor(satoru % 60);
 
-      for (let i = 1; i < loadingFrames.length; i++) {
-        await delay(400);
-        await api.editMessage(
-          `🌕 𝐋𝐨𝐚𝐝𝐢𝐧𝐠 𝐁𝐨𝐭 𝐔𝐩𝐭𝐢𝐦𝐞...\n${loadingFrames[i]}`,
-          loadingMsg.messageID
-        );
-      }
+            const uptimeServer = `╭───────🌟 𝚂𝙴𝚁𝚅𝙴𝚄𝚁 ───────╮\n│\n│ ${sungJinWoo} 𝚓𝚘𝚞𝚛𝚜\n│ ${Igris} 𝚑𝚎𝚞𝚛𝚎𝚜\n│ ${beru} 𝚖𝚒𝚗𝚞𝚝𝚎𝚜\n│ ${bellion} 𝚜𝚎𝚌𝚘𝚗𝚝𝚎𝚜\n│\n╰─────────────────────╯`;
 
-      // Step 2: Calculate uptime and system info
-      const uptime = process.uptime();
-      const days = Math.floor(uptime / 86400);
-      const hours = Math.floor((uptime % 86400) / 3600);
-      const minutes = Math.floor((uptime % 3600) / 60);
-      const seconds = Math.floor(uptime % 60);
-      const uptimeFormatted = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            const totalMem = OsangoMessie.totalmem() / (1024 ** 3);
+            const usedMem = (OsangoMessie.totalmem() - OsangoMessie.freemem()) / (1024 ** 3);
+            const cpuSpeed = (OsangoMessie.cpus()[0].speed / 1000).toFixed(2);
 
-      const memoryUsage = (process.memoryUsage().rss / 1024 / 1024).toFixed(2);
-      const ping = Math.floor(Math.random() * 100) + 50; // simulated ping
+            const now = moment().tz('Africa/Douala').format('YYYY-MM-DD HH:mm:ss');
 
-      // Step 3: Date (Bangladesh timezone)
-      const date = new Date().toLocaleDateString("en-US", {
-        timeZone: "Asia/Dhaka",
-        day: "2-digit",
-        month: "long",
-        year: "numeric"
-      });
+            const message = `
+╭───────🌟 𝚂𝚈𝚂𝚃𝙴𝙼𝙴 ───────╮
+│
+│ ${applyStyle("𝙿𝙴𝚁𝙵𝙾𝚁𝙼𝙰𝙽𝙲𝙴𝚂")} 
+│
+${Osango}
+│
+${uptimeServer}
 
-      // Step 4: Total users & threads
-      let totalUsers = 0;
-      let totalThreads = 0;
+╭───────🌟 𝚁𝙴𝚂𝚂𝙾𝚄𝚁𝙲𝙴 ───────╮
+│
+│ 𝙲𝙿𝚄: ${cpuSpeed} 𝙶𝙷𝚣
+│ 𝚁𝙰𝙼: ${usedMem.toFixed(2)}/${totalMem.toFixed(2)} 𝙶𝙱
+│
+╰─────────────────────╯
+│
+╭───────🌟 𝙷𝙴𝚄𝚁𝙴 ───────╮
+│
+│ ${now}
+│
+╰─────────────────────╯`;
 
-      if (usersData && typeof usersData.getAll === "function") {
-        const allUsers = await usersData.getAll();
-        totalUsers = allUsers.length;
-      }
+            api.sendMessage(message, event.threadID);
 
-      if (threadsData && typeof threadsData.getAll === "function") {
-        const allThreads = await threadsData.getAll();
-        totalThreads = allThreads.length;
-      }
-
-      // Step 5: Final output
-      const finalMessage = `
-> 🎀 𝐵𝑜𝑡 𝑈𝑝𝑡𝑖𝑚𝑒 𝐼𝑛𝑓𝑜
-
-🕒 ᴜᴘᴛɪᴍᴇ : ${uptimeFormatted}
-📶 ᴘɪɴɢ     : ${ping}ms
-📅 ᴅᴀᴛᴇ    : ${date}
-💻 ᴍᴇᴍᴏʀʏ : ${memoryUsage} MB
-👥 ᴛᴏᴛᴀʟ ᴜꜱᴇʀꜱ : ${totalUsers}
-💬 ᴛᴏᴛᴀʟ ᴛʜʀᴇᴀᴅꜱ : ${totalThreads}
-👑 ᴏᴡɴᴇʀ  : Mohammad Alamin
-      `.trim();
-
-      await delay(300);
-      await api.editMessage(finalMessage, loadingMsg.messageID);
-    } catch (err) {
-      console.error("Uptime command error:", err);
-      api.sendMessage("❌ Failed to load uptime info.", event.threadID);
+        } catch (error) {
+            console.error(error);
+            api.sendMessage(`╭───────🌟 𝙴𝚁𝚁𝙴𝚄𝚁 ───────╮\n│\n│   ${applyStyle("𝙴𝚛𝚛𝚎𝚞𝚛 𝚜𝚢𝚜𝚝𝚎𝚖𝚎")}\n│\n╰─────────────────────╯`, event.threadID);
+        }
     }
-  }
 };
