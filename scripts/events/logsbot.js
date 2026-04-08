@@ -13,17 +13,11 @@ module.exports = {
 	},
 
 	langs: {
-		vi: {
-			title: "====== Nhật ký bot ======",
-			added: "\n✅\nSự kiện: bot được thêm vào nhóm mới\n- Người thêm: %1",
-			kicked: "\n❌\nSự kiện: bot bị kick\n- Người kick: %1",
-			footer: "\n- User ID: %1\n- Nhóm: %2\n- ID nhóm: %3\n- Thời gian: %4"
-		},
-		en: {
-			title: "====== Bot logs ======",
-			added: "\n✅\nEvent: bot has been added to a new group\n- Added by: %1",
-			kicked: "\n❌\nEvent: bot has been kicked\n- Kicked by: %1",
-			footer: "\n- User ID: %1\n- Group: %2\n- Group ID: %3\n- Time: %4"
+		fr: {
+			title: "👑═🇫🇷 ROYAL NOTIFICATION ═👑",
+			added: "✅ Événement : Le bot a été ajouté à un nouveau groupe\n👤 Ajouté par : %1",
+			kicked: "❌ Événement : Le bot a été expulsé du groupe\n👤 Expulsé par : %1",
+			footer: "🔹 ID utilisateur : %1\n🔹 Nom du groupe : %2\n🔹 ID du groupe : %3\n🔹 Heure : %4\n🌟 Style Royal 🌟"
 		}
 	},
 
@@ -32,10 +26,13 @@ module.exports = {
 			(event.logMessageType == "log:subscribe" && event.logMessageData.addedParticipants.some(item => item.userFbId == api.getCurrentUserID()))
 			|| (event.logMessageType == "log:unsubscribe" && event.logMessageData.leftParticipantFbId == api.getCurrentUserID())
 		) return async function () {
-			let msg = getLang("title");
+			let msg = "╔════════════════════════════╗\n";
+			msg += " " + getLang("title") + "\n";
+			msg += "╠════════════════════════════╣";
+
 			const { author, threadID } = event;
-			if (author == api.getCurrentUserID())
-				return;
+			if (author == api.getCurrentUserID()) return;
+
 			let threadName;
 			const { config } = global.GoatBot;
 
@@ -44,18 +41,19 @@ module.exports = {
 					return;
 				threadName = (await api.getThreadInfo(threadID)).threadName;
 				const authorName = await usersData.getName(author);
-				msg += getLang("added", authorName);
-			}
-			else if (event.logMessageType == "log:unsubscribe") {
+				msg += "\n" + getLang("added", authorName);
+			} else if (event.logMessageType == "log:unsubscribe") {
 				if (event.logMessageData.leftParticipantFbId != api.getCurrentUserID())
 					return;
 				const authorName = await usersData.getName(author);
 				const threadData = await threadsData.get(threadID);
 				threadName = threadData.threadName;
-				msg += getLang("kicked", authorName);
+				msg += "\n" + getLang("kicked", authorName);
 			}
+
 			const time = getTime("DD/MM/YYYY HH:mm:ss");
-			msg += getLang("footer", author, threadName, threadID, time);
+			msg += "\n" + getLang("footer", author, threadName, threadID, time);
+			msg += "\n╚════════════════════════════╝";
 
 			for (const adminID of config.adminBot)
 				api.sendMessage(msg, adminID);
