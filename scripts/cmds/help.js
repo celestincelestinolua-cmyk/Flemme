@@ -34,55 +34,92 @@ module.exports = {
   onStart: async ({ message, args, event, role }) => {
     const prefix = await getPrefix(event.threadID);
 
+    /* ================= LIST MODE ================= */
     if (!args[0]) {
       const categories = {};
-      let msg = `╔════════════════════╗\n║ 🌿 HELP COMMANDS 🌿 ║\n╠════════════════════╣\n`;
+
+      let msg =
+`━━━━━━━━━━━━━━━━━━━━━━
+╔══════════════════════╗
+║ 🌿 𝗛𝗘𝗟𝗣 𝗠𝗘𝗡𝗨 🌿 ║
+╚══════════════════════╝
+━━━━━━━━━━━━━━━━━━━━━━\n`;
 
       for (const [name, cmd] of commands) {
         if (cmd.config.role > role) continue;
+
         const cat = cmd.config.category || "NO CATEGORY";
         if (!categories[cat]) categories[cat] = [];
         categories[cat].push(name);
       }
 
       for (const cat of Object.keys(categories).sort()) {
-        msg += `╔━━═[ ⚡ ${applyFont(cat.toUpperCase())} ⚡ ]══╗\n`;
+        msg += `
+━━━━━━━━━━━━━━━━━━━━━━
+╔══════[ ⚡ ${applyFont(cat.toUpperCase())} ⚡ ]══════╗
+`;
+
         for (const name of categories[cat].sort()) {
-          msg += `┃ ✦ ${applyFont(name)}\n`;
+          msg += `║ ✦ ${applyFont(name)}\n`;
         }
-        msg += `╚══════════════════╝\n`;
+
+        msg += `╚══════════════════════╝\n`;
       }
 
-      msg += `╔════════════════════╗\n║ TOTAL: ${commands.size} ║\n║ PREFIX: ${prefix} ║\n╚════════════════════╝`;
-      msg += `\n💬 ${prefix}help <command>\n`;
+      msg += `
+━━━━━━━━━━━━━━━━━━━━━━
+╔══════════════════════╗
+║ ⚙️ TOTAL : ${commands.size}
+║ 🔑 PREFIX : ${prefix}
+╚══════════════════════╝
+━━━━━━━━━━━━━━━━━━━━━━
+💬 ${prefix}help <command>
+━━━━━━━━━━━━━━━━━━━━━━`;
 
       return message.reply(msg);
     }
 
+    /* ================= DETAIL MODE ================= */
     const commandName = args[0].toLowerCase();
-    const command = commands.get(commandName) || commands.get(aliases.get(commandName));
+    const command =
+      commands.get(commandName) ||
+      commands.get(aliases.get(commandName));
 
     if (!command) {
-      return message.reply(`╔═══[ ❌ ERROR ]═══╗\n┃ Command not found\n╚══════════════════╝`);
+      return message.reply(
+`━━━━━━━━━━━━━━━━━━━━━━
+╔══════════════════════╗
+║ ❌ COMMAND NOT FOUND ║
+╚══════════════════════╝
+━━━━━━━━━━━━━━━━━━━━━━`
+      );
     }
 
     const cfg = command.config;
-    const roleText = {0:"All users",1:"Admins",2:"Bot admins"}[cfg.role] || "Unknown";
-    const usage = (cfg.guide?.en || "{pn} " + cfg.name).replace("{pn}", prefix);
 
-    const resp = `╔═══[ ${applyFont(cfg.name.toUpperCase())} ]══╗
-┃ Version: ${cfg.version || "1.0"}
-┃ Author: ${cfg.author}
-┃ Role: ${roleText}
-┃ Cooldown: ${cfg.countDown || 2}s
-┃
-┃ Description:
-┃ ${cfg.longDescription?.en || "No description"}
-┃
-┃ Usage:
-┃ ${usage}
-╚══════════════════╝`;
+    const roleText =
+      {0:"All users",1:"Admins",2:"Bot admins"}[cfg.role] ||
+      "Unknown";
 
-    return message.reply(resp);
+    const usage =
+      (cfg.guide?.en || "{pn} " + cfg.name).replace("{pn}", prefix);
+
+    return message.reply(
+`━━━━━━━━━━━━━━━━━━━━━━
+╔══════[ ⚡ ${applyFont(cfg.name.toUpperCase())} ⚡ ]══════╗
+╠══════════════════════╣
+║ 📌 Version : ${cfg.version || "1.0"}
+║ 👤 Author  : ${cfg.author}
+║ 🔐 Role    : ${roleText}
+║ ⏱️ Cooldown : ${cfg.countDown || 2}s
+╠══════════════════════╣
+║ 📖 Description :
+║ ${cfg.longDescription?.en || "No description"}
+╠══════════════════════╣
+║ ⚡ Usage :
+║ ${usage}
+╚══════════════════════╝
+━━━━━━━━━━━━━━━━━━━━━━`
+    );
   }
 };
